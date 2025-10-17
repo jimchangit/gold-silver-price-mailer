@@ -91,7 +91,7 @@ if __name__ == "__main__":
     summary = get_rates_summary()
 
     # 🔐 從 GitHub Secrets 讀取
-    sender = os.environ.get("jimchangit1@gmail.com"")
+    sender = os.environ.get("jimchangit1@gmail.com")
     receiver = os.environ.get("jx73chen@gmail.com")
     app_password = os.environ.get("gqrs fiyl lscq yosu")
 

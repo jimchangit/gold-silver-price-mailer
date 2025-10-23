@@ -4,13 +4,11 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
 
-# 使用 exchangerate-api 查法幣匯率
 def get_exchange_rate(base_currency, target_currency, api_key):
     url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/{base_currency}"
     try:
         response = requests.get(url)
         data = response.json()
-
         if data['result'] == 'success':
             rate = data['conversion_rates'].get(target_currency)
             if rate:
@@ -22,14 +20,9 @@ def get_exchange_rate(base_currency, target_currency, api_key):
     except Exception as e:
         return f"錯誤: {e}"
 
-# 使用 CoinGecko 查 BTC 匯率
 def get_btc_to_twd():
     url = "https://api.coingecko.com/api/v3/simple/price"
-    params = {
-        'ids': 'bitcoin',
-        'vs_currencies': 'twd'
-    }
-
+    params = {'ids': 'bitcoin', 'vs_currencies': 'twd'}
     try:
         response = requests.get(url, params=params)
         data = response.json()
@@ -38,7 +31,6 @@ def get_btc_to_twd():
     except Exception as e:
         return f"查詢 BTC 錯誤: {e}"
 
-# 使用 goldprice.org 查金價與銀價（單位：美元）
 def get_gold_and_silver_price():
     url = "https://data-asg.goldprice.org/dbXRates/USD"
     try:
@@ -51,7 +43,6 @@ def get_gold_and_silver_price():
     except Exception as e:
         return f"查詢金銀價錯誤: {e}"
 
-# 將所有查詢結果收集成 email 內容
 def get_rates_summary():
     api_key = "1f7537b2002b5281285975b0"
     currency_list = ['USD', 'JPY', 'AUD']
@@ -69,14 +60,12 @@ def get_rates_summary():
 
     return "\n".join(lines)
 
-# 使用 Gmail 寄送 email
 def send_email(subject, body, sender_email, receiver_email, app_password):
     try:
         msg = MIMEMultipart()
         msg['From'] = sender_email
         msg['To'] = receiver_email
         msg['Subject'] = subject
-
         msg.attach(MIMEText(body, 'plain'))
 
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
@@ -90,10 +79,9 @@ def send_email(subject, body, sender_email, receiver_email, app_password):
 if __name__ == "__main__":
     summary = get_rates_summary()
 
-    # 🔐 從 GitHub Secrets 讀取
-    sender = os.environ.get("jimchangit1@gmail.com")
-    receiver = os.environ.get("jx73chen@gmail.com")
-    app_password = os.environ.get("gqrs fiyl lscq yosu")
+    sender = os.environ.get("GMAIL_USER")
+    receiver = os.environ.get("RECIPIENT_EMAIL")
+    app_password = os.environ.get("GMAIL_APP_PASSWORD")
 
     if not sender or not receiver or not app_password:
         print("❌ 缺少寄信環境變數，請確認 GitHub Secrets 設定正確")
